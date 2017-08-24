@@ -16,7 +16,7 @@ public class Op2ional<A, B> {
     private final A left;
     private final B right;
 
-    public <T> Optional<T> combine(@NonNull BiFunction<A, B, T> function) {
+    public <T> Optional<T> reduce(@NonNull BiFunction<A, B, T> function) {
         return allPresent()
                 ? Optional.ofNullable(function.apply(left, right))
                 : Optional.empty();
