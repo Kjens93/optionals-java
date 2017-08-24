@@ -19,34 +19,46 @@ public class Op2ional<A, B> {
     private final A left;
     private final B right;
 
-    public <T> Optional<T> map(@NonNull BiFunction<A, B, T> function) {
-        return (left != null && right != null)
+    public <T> Optional<T> combine(@NonNull BiFunction<A, B, T> function) {
+        return allPresent()
                 ? Optional.ofNullable(function.apply(left, right))
                 : Optional.empty();
     }
 
     public Op2ional<A, B> filter(@NonNull BiPredicate<A, B> predicate) {
-        return (left != null && right != null)
+        return allPresent()
                 ? predicate.test(left, right)
-                    ? Op2ional.ofNullable(left, right)
-                    : Op2ional.empty()
-                : Op2ional.empty();
+                    ? ofNullable(left, right)
+                    : empty()
+                : empty();
+    }
+
+    public <T, V> Op2ional<T, V> map(@NonNull Function<A, T> leftFunction, @NonNull Function<B, V> rightFunction) {
+        return ofNullable(leftFunction.apply(left), rightFunction.apply(right));
     }
 
     public <T> Op2ional<T, B> mapLeft(@NonNull Function<A, T> function) {
-        return Op2ional.ofNullable(left == null ? null : function.apply(left), right);
+        T left = this.left == null ? null : function.apply(this.left);
+        return ofNullable(left, right);
     }
 
-    public <T> Op2ional<A, T> mapRight(@NonNull Function<B, T> function) {
-        return Op2ional.ofNullable(left, right == null ? null : function.apply(right));
+    public <V> Op2ional<A, V> mapRight(@NonNull Function<B, V> function) {
+        V right = this.right == null ? null : function.apply(this.right);
+        return ofNullable(left, right);
     }
 
-    public Op2ional<A, B> filterLeft(@NonNull Predicate<A> function) {
-        return Op2ional.ofNullable(left != null && function.test(left) ? left : null, right);
+    public Op2ional<A, B> filterLeft(@NonNull Predicate<A> predicate) {
+        A left = this.left == null ? null : predicate.test(this.left) ? this.left : null;
+        return ofNullable(left, right);
     }
 
-    public Op2ional<A, B> filterRight(@NonNull Predicate<B> function) {
-        return Op2ional.ofNullable(left, right != null && function.test(right) ? right : null);
+    public Op2ional<A, B> filterRight(@NonNull Predicate<B> predicate) {
+        B right = this.right == null ? null : predicate.test(this.right) ? this.right : null;
+        return ofNullable(left, right);
+    }
+
+    public boolean allPresent() {
+        return left != null && right != null;
     }
 
     public static <A, B> Op2ional<A, B> ofNullable(A a, B b) {
