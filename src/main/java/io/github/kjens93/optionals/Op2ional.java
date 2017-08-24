@@ -5,10 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 /**
  * @author kjensen
@@ -59,6 +56,12 @@ public class Op2ional<A, B> {
 
     public boolean allPresent() {
         return left != null && right != null;
+    }
+
+    public void ifPresent(@NonNull BiConsumer<A, B> consumer) {
+        if (allPresent()) {
+            consumer.accept(left, right);
+        }
     }
 
     public static <A, B> Op2ional<A, B> ofNullable(A a, B b) {
