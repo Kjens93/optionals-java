@@ -31,7 +31,7 @@ public class Op2ional<A, B> {
     }
 
     public <T, V> Op2ional<T, V> map(@NonNull Function<A, T> leftFunction, @NonNull Function<B, V> rightFunction) {
-        return ofNullable(leftFunction.apply(left), rightFunction.apply(right));
+        return mapLeft(leftFunction).mapRight(rightFunction);
     }
 
     public <T> Op2ional<T, B> mapLeft(@NonNull Function<A, T> function) {
